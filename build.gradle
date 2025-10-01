@@ -1,3 +1,6 @@
+import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 plugins {
     id 'java'
     id 'org.jetbrains.kotlin.jvm' version '1.9.24'
@@ -7,11 +10,19 @@ plugins {
 }
 
 repositories {
-    maven {
-        url uri('lib')
-    }
     mavenCentral()
     mavenLocal()
+    maven {
+        url "https://repo.specmatic.io/releases"
+    }
+}
+
+tasks.withType(KotlinCompile).configureEach {
+    kotlinOptions {
+        jvmTarget = "17"
+        compilerOptions.languageVersion.set(KotlinVersion.KOTLIN_2_1)
+        compilerOptions.apiVersion.set(KotlinVersion.KOTLIN_2_1)
+    }
 }
 
 jacocoTestReport {
@@ -34,6 +45,7 @@ dependencies {
 
     testImplementation "io.specmatic:junit5-support:${specmaticVersion}"
     testImplementation "io.specmatic.graphql:specmatic-graphql:${specmaticGraphqlVersion}"
+    testImplementation 'org.testcontainers:junit-jupiter:1.21.3'
 }
 
 test {

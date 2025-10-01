@@ -2,8 +2,8 @@
 
 # GraphQL Contract Testing Using Specmatic
 
-* [Specmatic Website](https://specmatic.in)
-* [Specmatic Documenation](https://specmatic.in/documentation.html)
+* [Specmatic Website](https://specmatic.io)
+* [Specmatic Documentation](https://specmatic.io/documentation.html)
 
 This sample project demonstrates how we can practice contract-driven development and contract testing in a GraphQL (Kotlin) API that depends on an external domain service. Here, Specmatic is used to stub calls to domain API service based on its OpenAPI specification.
 
@@ -22,7 +22,7 @@ On Windows:
 gradlew bootRun
 ```
 
-You'll need the backend product API server running for this to work. You can get it from [here](https://github.com/znsio/specmatic-order-api-java). The README.md file in the repo contain instructions for starting up the backend API server.
+You'll need the backend product API server running for this to work. You can get it from [here](https://github.com/specmatic/specmatic-order-api-java). The README.md file in the repo contain instructions for starting up the backend API server.
 
 Visit http://localhost:8080/graphiql to access the GraphiQL interface.
 
@@ -31,7 +31,7 @@ Visit http://localhost:8080/graphiql to access the GraphiQL interface.
 1. Start the Specmatic http stub server to emulate domain service:
 
    ```shell
-      docker run --network host -p 8090:8090 -v "$(pwd)/specmatic.yaml:/usr/src/app/specmatic.yaml" znsio/specmatic virtualize --port=8090
+      docker run --network host -p 8090:8090 -v "$(pwd)/specmatic.yaml:/usr/src/app/specmatic.yaml" specmatic/specmatic virtualize --port=8090
    ```
 
 2. Build and run the BFF service (System Under Test) in a Docker container:
@@ -49,5 +49,5 @@ Visit http://localhost:8080/graphiql to access the GraphiQL interface.
 3. Finally, run Specmatic Contract on the BFF service (System Under Test):
 
    ```shell
-   docker run --network host -v "$(pwd)/specmatic.yaml:/usr/src/app/specmatic.yaml" -v "$(pwd)/build/reports/specmatic:/usr/src/app/build/reports/specmatic"  -e SPECMATIC_GENERATIVE_TESTS=true znsio/specmatic-graphql test --port=8080 --host=host.docker.internal
+   docker run --network host -v "$(pwd)/specmatic.yaml:/usr/src/app/specmatic.yaml" -v "$(pwd)/build/reports/specmatic:/usr/src/app/build/reports/specmatic"  -e SPECMATIC_GENERATIVE_TESTS=true specmatic/specmatic-graphql test --port=8080 --host=host.docker.internal
    ```
