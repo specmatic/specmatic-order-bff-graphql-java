@@ -36,7 +36,7 @@ dependencies {
     implementation "org.springframework.boot:spring-boot-starter-web:3.4.4"
     implementation "org.springframework.boot:spring-boot-starter-actuator:3.4.4"
     implementation "org.springframework.boot:spring-boot-starter-graphql:3.4.4"
-    implementation 'org.jetbrains.kotlin:kotlin-reflect:1.9.24'
+    implementation 'org.jetbrains.kotlin:kotlin-reflect:2.2.21'
     implementation 'javax.validation:validation-api:2.0.1.Final'
 
     testImplementation "org.springframework.boot:spring-boot-starter-test:3.4.4"
