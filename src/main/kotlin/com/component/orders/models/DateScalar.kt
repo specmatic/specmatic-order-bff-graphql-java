@@ -9,12 +9,14 @@ import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
 
+const val SIMPLE_DATE_FORMAT_PATTERN = "yyyy-mm-dd"
+
 val DateScalar: GraphQLScalarType = GraphQLScalarType.newScalar()
     .name("Date")
     .description("A custom scalar that handles Date values")
     .coercing(object : Coercing<Date, String> {
-        private val dateFormat = SimpleDateFormat("yyyy/mm/dd")
-        private val formatErrorMessage = "Invalid date format. Expected format - yyyy/mm/dd"
+        private val dateFormat = SimpleDateFormat(SIMPLE_DATE_FORMAT_PATTERN)
+        private val formatErrorMessage = "Invalid date format. Expected format - $SIMPLE_DATE_FORMAT_PATTERN"
 
         override fun serialize(dataFetcherResult: Any): String {
             return if (dataFetcherResult is Date) {

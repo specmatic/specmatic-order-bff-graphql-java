@@ -1,5 +1,6 @@
 package com.component.orders.backend
 
+import com.component.orders.models.SIMPLE_DATE_FORMAT_PATTERN
 import com.component.orders.models.Offer
 import org.springframework.stereotype.Service
 import java.text.SimpleDateFormat
@@ -29,7 +30,7 @@ class OfferService {
         return offers.filter { it.validUntil >= date }
     }
 
-    private fun formattedFutureDate(monthsFromNow: Long): Date = SimpleDateFormat("yyyy/mm/dd").parse(
-        LocalDate.now().plusMonths(monthsFromNow).format(DateTimeFormatter.ofPattern("yyyy/MM/dd"))
+    private fun formattedFutureDate(monthsFromNow: Long): Date = SimpleDateFormat(SIMPLE_DATE_FORMAT_PATTERN).parse(
+        LocalDate.now().plusMonths(monthsFromNow).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
     )
 }
