@@ -1,8 +1,8 @@
 package com.component.orders.models
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
-import javax.validation.constraints.NotNull
-import javax.validation.constraints.Positive
+import jakarta.validation.constraints.NotNull
+import jakarta.validation.constraints.Positive
 
 data class NewProduct(
     @field:NotNull @field:JsonDeserialize(using = StrictStringDeserializer::class) val name: String = "",
