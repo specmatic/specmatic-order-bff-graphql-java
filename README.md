@@ -5,7 +5,7 @@
 * [Specmatic Website](https://specmatic.io)
 * [Specmatic Documentation](https://docs.specmatic.io)
 
-This sample project demonstrates how we can practice contract-driven development and contract testing in a GraphQL (Kotlin) API that depends on an external domain service. Here, Specmatic is used to stub calls to domain API service based on its OpenAPI specification.
+This sample project demonstrates how we can practice contract-driven development and contract testing in a GraphQL (Kotlin) API that depends on an external domain service. Here, Specmatic is used to mock calls to domain API service based on its OpenAPI specification.
 
 ### Starting the server
 
@@ -26,9 +26,9 @@ The README.md file in the repo contain instructions for starting up the backend 
 
 Visit http://localhost:8080/graphiql to access the GraphiQL interface.
 
-### Running the contract tests using Docker
+### Running the contract tests
 
-#### 1. Start the Specmatic http stub server
+#### 1. Start the Specmatic http mock server
 
 - On Unix and Windows Powershell:
 
@@ -41,7 +41,7 @@ docker run --rm -p 8090:8090 -v "$(pwd)/specmatic.yaml:/usr/src/app/specmatic.ya
 docker run --rm -p 8090:8090 -v "%cd%/specmatic.yaml:/usr/src/app/specmatic.yaml" specmatic/specmatic virtualize --port=8090
 ```
 
-#### 2.a Build and run the BFF service (System Under Test) in a Docker container
+#### 2.a Build and run the BFF service (System Under Test) in a Docker container OR
 
 ```shell
 docker build --no-cache -t specmatic-order-bff-graphql .
