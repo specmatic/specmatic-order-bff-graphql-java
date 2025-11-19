@@ -33,7 +33,7 @@ jobs:
             if: always() # Run even if tests fail
             with:
               name: ctrf-report
-              path: build/reports/specmatic/graphql/ctrf/*.json
+              path: build/reports/specmatic/graphQL/ctrf/*.json
               retention-days: 5
         
           # Display CTRF test results
@@ -41,4 +41,4 @@ jobs:
             uses: ctrf-io/github-test-reporter@v1
             if: always() # Run even if tests fail
             with:
-              report-path: './build/reports/specmatic/graphql/ctrf/*.json'
+              report-path: './build/reports/specmatic/graphQL/ctrf/*.json'
