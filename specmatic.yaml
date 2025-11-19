@@ -11,3 +11,7 @@ contracts:
 test:
   resiliencyTests:
     enable: all
+
+report:
+  formatters:
+    - type: ctrf
