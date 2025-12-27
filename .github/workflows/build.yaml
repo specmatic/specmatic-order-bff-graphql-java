@@ -12,9 +12,10 @@ jobs:
           matrix:
             os: [ ubuntu-latest ]
         runs-on: ${{ matrix.os }}
+        env:
+          CTRF_REPORT_PATH: './build/reports/specmatic/graphQL/test/ctrf/*.json'
         steps:
           - uses: actions/checkout@v6
-            with: { fetch-depth: 0 }
 
           - name: Set up JDK 17
             uses: actions/setup-java@v5
@@ -33,7 +34,7 @@ jobs:
             if: always() # Run even if tests fail
             with:
               name: ctrf-report
-              path: build/reports/specmatic/graphQL/test/ctrf/*.json
+              path: ${{ env.CTRF_REPORT_PATH }}
               retention-days: 5
         
           # Display CTRF test results
@@ -41,4 +42,4 @@ jobs:
             uses: ctrf-io/github-test-reporter@v1
             if: always() # Run even if tests fail
             with:
-              report-path: './build/reports/specmatic/graphQL/test/ctrf/*.json'
+              report-path: ${{ env.CTRF_REPORT_PATH }}
