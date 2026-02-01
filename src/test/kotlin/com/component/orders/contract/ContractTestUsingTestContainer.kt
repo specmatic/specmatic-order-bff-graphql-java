@@ -18,6 +18,7 @@ import org.testcontainers.junit.jupiter.Testcontainers
 @EnabledIf(value = "isNonCIOrLinux", disabledReason = "Run only on Linux in CI; all platforms allowed locally")
 class ContractTestsUsingTestContainer {
     companion object {
+        private val dockerHostAddress: String = System.getProperty("docker.host.address",  "host-gateway")
         private const val APPLICATION_HOST = "host.docker.internal"
         private const val APPLICATION_PORT = 8080
         private const val HTTP_STUB_PORT = 8090
@@ -27,11 +28,9 @@ class ContractTestsUsingTestContainer {
 
         @Container
         private val stubContainer: GenericContainer<*> =
-            GenericContainer("specmatic/specmatic")
+            GenericContainer("specmatic/enterprise")
                 .withCommand(
                     "virtualize",
-                    "--examples=examples",
-                    "--port=$HTTP_STUB_PORT",
                 ).withCreateContainerCmdModifier { cmd ->
                     cmd.hostConfig?.withPortBindings(
                         PortBinding(Ports.Binding.bindPort(HTTP_STUB_PORT), ExposedPort(HTTP_STUB_PORT)),
@@ -45,11 +44,11 @@ class ContractTestsUsingTestContainer {
                     "./specmatic.yaml",
                     "/usr/src/app/specmatic.yaml",
                     BindMode.READ_ONLY,
-                ).waitingFor(Wait.forHttp("/actuator/health").forStatusCode(200))
+                )
                 .withLogConsumer { print(it.utf8String) }
 
         private val testContainer: GenericContainer<*> =
-            GenericContainer("specmatic/specmatic-graphql")
+            GenericContainer("specmatic/enterprise")
                 .withCommand("test", "--host=$APPLICATION_HOST", "--port=$APPLICATION_PORT")
                 .withFileSystemBind(
                     "./specmatic.yaml",
@@ -60,12 +59,13 @@ class ContractTestsUsingTestContainer {
                     "/usr/src/app/build/reports/specmatic",
                     BindMode.READ_WRITE,
                 ).waitingFor(Wait.forLogMessage(".*Tests run:.*", 1))
-                .withExtraHost("host.docker.internal", "host-gateway")
+                .withExtraHost("host.docker.internal", dockerHostAddress)
                 .withLogConsumer { print(it.utf8String) }
     }
 
     @Test
     fun specmaticContractTest() {
+        stubContainer.start()
         testContainer.start()
         val hasSucceeded = testContainer.logs.contains("Failures: 0")
         assertThat(hasSucceeded).isTrue()
