@@ -118,5 +118,5 @@ docker run --rm ^
   -v "%cd%/specmatic.yaml:/usr/src/app/specmatic.yaml" ^
   -v "%cd%/build/reports/specmatic:/usr/src/app/build/reports/specmatic" ^
   specmatic/enterprise ^
-   test --host=host.docker.internal --port=8080
+   test
 ```

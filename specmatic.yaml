@@ -6,13 +6,18 @@ contracts:
     provides:
       - specs:
           - io/specmatic/examples/store/graphql/products_bff.graphqls
-        baseUrl: http://localhost:8080
+        specType: graphqlsdl
+        config:
+          host: localhost
+          port: 8080
     consumes:
       - specs:
           - io/specmatic/examples/store/openapi/api_order_v3.yaml
-        baseUrl: http://localhost:8090
-        examples:
-          - ./src/test/resources/expectations
+        specType: openapi
+        config:
+          baseUrl: http://localhost:8090
+          examples:
+            - ./src/test/resources/expectations
 test:
   resiliencyTests:
     enable: all
