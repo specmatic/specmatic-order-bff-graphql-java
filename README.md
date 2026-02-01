@@ -35,7 +35,7 @@ Make the following changes in specmatic.yaml:
     provides:
     - specs:
         - io/specmatic/examples/store/graphql/products_bff.graphqls
-      baseUrl: http://host.docker.internal:8080
+      baseUrl: http://localhost:8080
 ```
 2. Set examples to ```./examples``` in this section:
 
@@ -45,7 +45,7 @@ Make the following changes in specmatic.yaml:
           - io/specmatic/examples/store/openapi/api_order_v3.yaml
         baseUrl: http://localhost:8090
         examples:
-          - ./examples
+          - ./src/test/resources/expectations
 ```
 
 #### 1. Start the Specmatic http mock server
