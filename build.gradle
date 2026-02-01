@@ -14,6 +14,7 @@ repositories {
     mavenLocal()
     maven {
         url "https://repo.specmatic.io/releases"
+        url = uri("https://packages.confluent.io/maven/")
     }
 }
 
@@ -44,8 +45,7 @@ dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter-api:6.0.2'
     testImplementation 'org.junit.jupiter:junit-jupiter:6.0.2'
 
-    testImplementation "io.specmatic:junit5-support:${specmaticVersion}"
-    testImplementation "io.specmatic.graphql:specmatic-graphql:${specmaticGraphqlVersion}"
+    testImplementation("io.specmatic.enterprise:executable:${specmaticEnterpriseVersion}")
     testImplementation 'org.testcontainers:junit-jupiter:1.21.4'
 }
 
