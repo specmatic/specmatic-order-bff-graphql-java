@@ -63,7 +63,12 @@ docker run --rm \
 
 - On Windows CMD Prompt:
 ```shell
-docker run --rm -p 8090:8090 -v "%cd%/specmatic.yaml:/usr/src/app/specmatic.yaml" specmatic/specmatic virtualize --port=8090
+docker run --rm ^
+  -p 8090:8090 ^
+  -v "%cd%/src/test/resources/expectations:/usr/src/app/examples" ^
+  -v "%cd%/specmatic.yaml:/usr/src/app/specmatic.yaml" ^
+  specmatic/enterprise ^
+  virtualize
 ```
 
 #### 2.a Build and run the BFF service (System Under Test) in a Docker container OR
@@ -108,5 +113,10 @@ docker run --rm \
 - On Windows CMD Prompt:
 
 ```shell
-docker run --rm --network host -v "%cd%/specmatic.yaml:/usr/src/app/specmatic.yaml" -v "%cd%/build/reports/specmatic:/usr/src/app/build/reports/specmatic"  -e SPECMATIC_GENERATIVE_TESTS=true specmatic/specmatic-graphql test --port=8080
+docker run --rm ^
+  --network host ^
+  -v "%cd%/specmatic.yaml:/usr/src/app/specmatic.yaml" ^
+  -v "%cd%/build/reports/specmatic:/usr/src/app/build/reports/specmatic" ^
+  specmatic/enterprise ^
+   test --host=host.docker.internal --port=8080
 ```
