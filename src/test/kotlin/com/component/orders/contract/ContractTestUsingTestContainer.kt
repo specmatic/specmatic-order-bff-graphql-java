@@ -20,11 +20,24 @@ class ContractTestsUsingTestContainer {
         fun isNonCIOrLinux(): Boolean =
             System.getenv("CI") != "true" || System.getProperty("os.name").lowercase().contains("linux")
 
+        fun isCIAndLinux(): Boolean =
+            System.getenv("CI") == "true" && System.getProperty("os.name").lowercase().contains("linux")
+
         @Container
         private val mockContainer: GenericContainer<*> =
             GenericContainer("specmatic/enterprise")
                 .withCommand("mock")
-                .withCreateContainerCmdModifier { cmd -> cmd.withUser("1001:1001") }
+                .withCreateContainerCmdModifier { cmd ->
+                    if (isCIAndLinux()) {
+                        try {
+                            val uid = ProcessBuilder("id", "-u").start().inputStream.bufferedReader().readText().trim()
+                            val gid = ProcessBuilder("id", "-g").start().inputStream.bufferedReader().readText().trim()
+                            cmd.withUser("$uid:$gid")
+                        } catch (e: Exception) {
+                            println("Failed to set container user: ${e.message}")
+                        }
+                    }
+                }
                 .withFileSystemBind(".", "/usr/src/app", BindMode.READ_WRITE)
                 .withNetworkMode("host")
                 .waitingFor(Wait.forHttp("/actuator/health").forStatusCode(200))
@@ -33,6 +46,17 @@ class ContractTestsUsingTestContainer {
         private val testContainer: GenericContainer<*> =
             GenericContainer("specmatic/enterprise")
                 .withCommand("test")
+                .withCreateContainerCmdModifier { cmd ->
+                    if (isCIAndLinux()) {
+                        try {
+                            val uid = ProcessBuilder("id", "-u").start().inputStream.bufferedReader().readText().trim()
+                            val gid = ProcessBuilder("id", "-g").start().inputStream.bufferedReader().readText().trim()
+                            cmd.withUser("$uid:$gid")
+                        } catch (e: Exception) {
+                            println("Failed to set container user: ${e.message}")
+                        }
+                    }
+                }
                 .withCreateContainerCmdModifier { cmd -> cmd.withUser("1001:1001") }
                 .withFileSystemBind(".", "/usr/src/app", BindMode.READ_WRITE)
                 .withNetworkMode("host")
