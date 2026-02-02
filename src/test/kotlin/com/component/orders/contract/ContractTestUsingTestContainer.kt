@@ -24,6 +24,7 @@ class ContractTestsUsingTestContainer {
         private val mockContainer: GenericContainer<*> =
             GenericContainer("specmatic/enterprise")
                 .withCommand("mock")
+                .withCreateContainerCmdModifier { cmd -> cmd.withUser("1001:1001") }
                 .withFileSystemBind(".", "/usr/src/app", BindMode.READ_WRITE)
                 .withNetworkMode("host")
                 .waitingFor(Wait.forHttp("/actuator/health").forStatusCode(200))
@@ -32,6 +33,7 @@ class ContractTestsUsingTestContainer {
         private val testContainer: GenericContainer<*> =
             GenericContainer("specmatic/enterprise")
                 .withCommand("test")
+                .withCreateContainerCmdModifier { cmd -> cmd.withUser("1001:1001") }
                 .withFileSystemBind(".", "/usr/src/app", BindMode.READ_WRITE)
                 .withNetworkMode("host")
                 .waitingFor(Wait.forLogMessage(".*Tests run:.*", 1))
