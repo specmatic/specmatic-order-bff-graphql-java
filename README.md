@@ -33,12 +33,12 @@ Visit http://localhost:8080/graphiql to access the GraphiQL interface.
 - On Unix and Windows Powershell:
 
 ```shell
-docker run --rm -p 8090:8090 -v "$(pwd)/specmatic.yaml:/usr/src/app/specmatic.yaml" specmatic/specmatic virtualize --port=8090
+docker run --rm --network host -v "$(pwd):/usr/src/app" specmatic/enterprise mock
 ```
 
 - On Windows CMD Prompt:
 ```shell
-docker run --rm -p 8090:8090 -v "%cd%/specmatic.yaml:/usr/src/app/specmatic.yaml" specmatic/specmatic virtualize --port=8090
+docker run --rm --network host -v "%cd%:/usr/src/app" specmatic/enterprise mock
 ```
 
 #### 2.a Build and run the BFF service (System Under Test) in a Docker container OR
@@ -72,11 +72,11 @@ gradlew bootRun
 - On Unix and Windows Powershell:
 
 ```shell
-docker run --rm --network host -v "$(pwd)/specmatic.yaml:/usr/src/app/specmatic.yaml" -v "$(pwd)/build/reports/specmatic:/usr/src/app/build/reports/specmatic"  -e SPECMATIC_GENERATIVE_TESTS=true specmatic/specmatic-graphql test --port=8080
+docker run --rm --network host -v "$(pwd):/usr/src/app" specmatic/enterprise test
 ```
 
 - On Windows CMD Prompt:
 
 ```shell
-docker run --rm --network host -v "%cd%/specmatic.yaml:/usr/src/app/specmatic.yaml" -v "%cd%/build/reports/specmatic:/usr/src/app/build/reports/specmatic"  -e SPECMATIC_GENERATIVE_TESTS=true specmatic/specmatic-graphql test --port=8080
+docker run --rm --network host -v "%cd%:/usr/src/app" specmatic/enterprise test
 ```

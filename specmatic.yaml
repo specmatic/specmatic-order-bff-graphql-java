@@ -4,10 +4,20 @@ contracts:
       branch: main
       url: https://github.com/specmatic/specmatic-order-contracts.git
     provides:
-      - io/specmatic/examples/store/graphql/products_bff.graphqls
+      - specs:
+          - io/specmatic/examples/store/graphql/products_bff.graphqls
+        specType: graphqlsdl
+        config:
+          host: localhost
+          port: 8080
     consumes:
-      - io/specmatic/examples/store/openapi/api_order_v3.yaml
-
+      - specs:
+          - io/specmatic/examples/store/openapi/api_order_v3.yaml
+        specType: openapi
+        config:
+          baseUrl: http://localhost:8090
+          examples:
+            - ./src/test/resources/expectations
 test:
   resiliencyTests:
     enable: all
