@@ -16,28 +16,23 @@ import org.testcontainers.junit.jupiter.Testcontainers
 class ContractTestsUsingTestContainer {
     companion object {
 
+        private fun isCI(): Boolean = System.getenv("CI") == "true"
+        private fun isNonCI(): Boolean = !isCI()
+        private fun isLinux(): Boolean = System.getProperty("os.name").lowercase().contains("linux")
+
         @JvmStatic
         fun isNonCIOrLinux(): Boolean =
-            System.getenv("CI") != "true" || System.getProperty("os.name").lowercase().contains("linux")
+            isNonCI() || isLinux()
 
         fun isCIAndLinux(): Boolean =
-            System.getenv("CI") == "true" && System.getProperty("os.name").lowercase().contains("linux")
+           isCI() && isLinux()
+
 
         @Container
         private val mockContainer: GenericContainer<*> =
             GenericContainer("specmatic/enterprise")
                 .withCommand("mock")
-                .withCreateContainerCmdModifier { cmd ->
-                    if (isCIAndLinux()) {
-                        try {
-                            val uid = ProcessBuilder("id", "-u").start().inputStream.bufferedReader().readText().trim()
-                            val gid = ProcessBuilder("id", "-g").start().inputStream.bufferedReader().readText().trim()
-                            cmd.withUser("$uid:$gid")
-                        } catch (e: Exception) {
-                            println("Failed to set container user: ${e.message}")
-                        }
-                    }
-                }
+                .withHostUserIfRunningInCIAndLinux(isCIAndLinux())
                 .withFileSystemBind(".", "/usr/src/app", BindMode.READ_WRITE)
                 .withNetworkMode("host")
                 .waitingFor(Wait.forHttp("/actuator/health").forStatusCode(200))
@@ -46,17 +41,7 @@ class ContractTestsUsingTestContainer {
         private val testContainer: GenericContainer<*> =
             GenericContainer("specmatic/enterprise")
                 .withCommand("test")
-                .withCreateContainerCmdModifier { cmd ->
-                    if (isCIAndLinux()) {
-                        try {
-                            val uid = ProcessBuilder("id", "-u").start().inputStream.bufferedReader().readText().trim()
-                            val gid = ProcessBuilder("id", "-g").start().inputStream.bufferedReader().readText().trim()
-                            cmd.withUser("$uid:$gid")
-                        } catch (e: Exception) {
-                            println("Failed to set container user: ${e.message}")
-                        }
-                    }
-                }
+                .withHostUserIfRunningInCIAndLinux(isCIAndLinux())
                 .withCreateContainerCmdModifier { cmd -> cmd.withUser("1001:1001") }
                 .withFileSystemBind(".", "/usr/src/app", BindMode.READ_WRITE)
                 .withNetworkMode("host")
@@ -72,3 +57,30 @@ class ContractTestsUsingTestContainer {
         assertThat(hasSucceeded).isTrue()
     }
 }
+
+private fun GenericContainer<*>.withHostUserIfRunningInCIAndLinux(
+    isCIAndLinux: Boolean,
+): GenericContainer<*> =
+    this.withCreateContainerCmdModifier { cmd ->
+        if (isCIAndLinux) {
+            try {
+                val uid = ProcessBuilder("id", "-u")
+                    .redirectErrorStream(true)
+                    .start()
+                    .apply { waitFor() }
+                    .inputStream.bufferedReader().readText().trim()
+
+                val gid = ProcessBuilder("id", "-g")
+                    .redirectErrorStream(true)
+                    .start()
+                    .apply { waitFor() }
+                    .inputStream.bufferedReader().readText().trim()
+
+                if (uid.isNotBlank() && gid.isNotBlank()) {
+                    cmd.withUser("$uid:$gid")
+                }
+            } catch (e: Exception) {
+                println("Failed to set container user: ${e.message}")
+            }
+        }
+    }
