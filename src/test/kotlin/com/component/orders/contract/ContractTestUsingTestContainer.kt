@@ -26,7 +26,6 @@ class ContractTestsUsingTestContainer {
                 .withCommand("mock")
                 .withFileSystemBind(".", "/usr/src/app", BindMode.READ_WRITE)
                 .withNetworkMode("host")
-                .withCreateContainerCmdModifier { cmd -> cmd.withUser("0:0") }
                 .waitingFor(Wait.forHttp("/actuator/health").forStatusCode(200))
                 .withLogConsumer { print(it.utf8String) }
 
@@ -35,7 +34,6 @@ class ContractTestsUsingTestContainer {
                 .withCommand("test")
                 .withFileSystemBind(".", "/usr/src/app", BindMode.READ_WRITE)
                 .withNetworkMode("host")
-                .withCreateContainerCmdModifier { cmd -> cmd.withUser("0:0") }
                 .waitingFor(Wait.forLogMessage(".*Tests run:.*", 1))
                 .withLogConsumer { print(it.utf8String) }
 
