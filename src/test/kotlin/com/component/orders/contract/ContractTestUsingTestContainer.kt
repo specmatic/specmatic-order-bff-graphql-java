@@ -23,8 +23,8 @@ class ContractTestsUsingTestContainer {
 
         @Container
         private val mockContainer: GenericContainer<*> =
-            GenericContainer("specmatic/enterprise")
-                .withImagePullPolicy(alwaysPull())
+            GenericContainer("specmatic/enterprise:1.0.5-SNAPSHOT")
+                // .withImagePullPolicy(alwaysPull())
                 .withCommand("mock")
                 .withFileSystemBind("./src", "/usr/src/app/src", BindMode.READ_ONLY)
                 .withFileSystemBind("./specmatic.yaml", "/usr/src/app/specmatic.yaml", BindMode.READ_ONLY,)
@@ -33,8 +33,8 @@ class ContractTestsUsingTestContainer {
                 .withLogConsumer { print(it.utf8String) }
 
         private val testContainer: GenericContainer<*> =
-            GenericContainer("specmatic/enterprise")
-                .withImagePullPolicy(alwaysPull())
+            GenericContainer("specmatic/enterprise:1.0.5-SNAPSHOT")
+                // .withImagePullPolicy(alwaysPull())
                 .withCommand("test")
                 .withFileSystemBind("./src", "/usr/src/app/src", BindMode.READ_ONLY)
                 .withFileSystemBind("./specmatic.yaml", "/usr/src/app/specmatic.yaml", BindMode.READ_ONLY,)

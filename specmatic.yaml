@@ -1,27 +1,66 @@
-version: 2
-contracts:
-  - git:
-      branch: main
-      url: https://github.com/specmatic/specmatic-order-contracts.git
-    provides:
-      - specs:
-          - io/specmatic/examples/store/graphql/products_bff.graphqls
-        specType: graphqlsdl
-        config:
-          host: localhost
-          port: 8080
-    consumes:
-      - specs:
-          - io/specmatic/examples/store/openapi/api_order_v3.yaml
-        specType: openapi
-        config:
-          baseUrl: http://localhost:8090
+version: 3
+systemUnderTest:
+  service:
+    $ref: "#/components/services/productsBffService"
+    runOptions:
+      $ref: "#/components/runOptions/productsBffServiceTest"
+dependencies:
+  services:
+    - service:
+        $ref: "#/components/services/orderApiService"
+        runOptions:
+          $ref: "#/components/runOptions/orderApiServiceMock"
+        data:
           examples:
-            - ./src/test/resources/expectations
-test:
-  resiliencyTests:
-    enable: all
-
-report:
-  formatters:
-    - type: ctrf
+            - directories:
+                - ./src/test/resources/expectations
+specmatic:
+  governance:
+    report:
+      formats: [ctrf]
+  settings:
+    test:
+      schemaResiliencyTests: all
+components:
+  sources:
+    specmaticOrderContracts:
+      git:
+        url: https://github.com/specmatic/specmatic-order-contracts.git
+        branch: main
+  services:
+    productsBffService:
+      description: Products BFF GraphQL Service
+      definitions:
+        - definition:
+            source:
+              $ref: "#/components/sources/specmaticOrderContracts"
+            specs:
+              - spec:
+                  id: productsBffSpec
+                  path: io/specmatic/examples/store/graphql/products_bff.graphqls
+    orderApiService:
+      description: Order API Service
+      definitions:
+        - definition:
+            source:
+              $ref: "#/components/sources/specmaticOrderContracts"
+            specs:
+              - spec:
+                  id: orderApiSpec
+                  path: io/specmatic/examples/store/openapi/api_order_v3.yaml
+  runOptions:
+    productsBffServiceTest:
+      graphqlsdl:
+        type: test
+        specs:
+          - spec:
+              id: productsBffSpec
+              host: localhost
+              port: 8080
+    orderApiServiceMock:
+      openapi:
+        type: mock
+        baseUrl: http://localhost:8090
+        specs:
+          - spec:
+              id: orderApiSpec

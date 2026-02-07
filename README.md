@@ -33,7 +33,7 @@ Visit http://localhost:8080/graphiql to access the GraphiQL interface.
 - On Unix and Windows Powershell:
 
 ```shell
-docker run --rm --network host -v "$(pwd):/usr/src/app" specmatic/enterprise mock
+docker run --rm --network host -v "$(pwd):/usr/src/app" specmatic/enterprise:1.0.5-SNAPSHOT mock
 ```
 
 - On Windows CMD Prompt:
@@ -72,7 +72,7 @@ gradlew bootRun
 - On Unix and Windows Powershell:
 
 ```shell
-docker run --rm --network host -v "$(pwd):/usr/src/app" specmatic/enterprise test
+docker run --rm --network host -v "$(pwd):/usr/src/app" specmatic/enterprise:1.0.5-SNAPSHOT test
 ```
 
 - On Windows CMD Prompt:
