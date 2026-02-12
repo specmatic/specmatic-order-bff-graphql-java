@@ -4,10 +4,6 @@ systemUnderTest:
     $ref: "#/components/services/productSearchGraphQLBffService"
     runOptions:
       $ref: "#/components/runOptions/productSearchGraphQLBffServiceTest"
-    data:
-      examples:
-        - directories:
-            - ./src/test/resources/bff
 dependencies:
   services:
     - service:
