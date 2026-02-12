@@ -1,27 +1,56 @@
-version: 2
-contracts:
-  - git:
-      branch: main
-      url: https://github.com/specmatic/specmatic-order-contracts.git
-    provides:
-      - specs:
-          - io/specmatic/examples/store/graphql/products_bff.graphqls
-        specType: graphqlsdl
-        config:
-          host: localhost
-          port: 8080
-    consumes:
-      - specs:
-          - io/specmatic/examples/store/openapi/api_order_v3.yaml
-        specType: openapi
-        config:
-          baseUrl: http://localhost:8090
+version: 3
+systemUnderTest:
+  service:
+    $ref: "#/components/services/productSearchGraphQLBffService"
+    runOptions:
+      $ref: "#/components/runOptions/productSearchGraphQLBffServiceTest"
+    data:
+      examples:
+        - directories:
+            - ./src/test/resources/bff
+dependencies:
+  services:
+    - service:
+        $ref: "#/components/services/orderApiService"
+        runOptions:
+          $ref: "#/components/runOptions/orderApiServiceMock"
+        data:
           examples:
-            - ./src/test/resources/expectations
-test:
-  resiliencyTests:
-    enable: all
-
-report:
-  formatters:
-    - type: ctrf
+            - directories:
+                - ./src/test/resources/expectations
+specmatic:
+  settings:
+    test:
+      schemaResiliencyTests: all
+components:
+  sources:
+    specmaticOrderContracts:
+      git:
+        url: https://github.com/specmatic/specmatic-order-contracts.git
+  services:
+    productSearchGraphQLBffService:
+      description: Product Search GraphQL BFF Service
+      definitions:
+        - definition:
+            source:
+              $ref: "#/components/sources/specmaticOrderContracts"
+            specs:
+              - io/specmatic/examples/store/graphql/products_bff.graphqls
+    orderApiService:
+      description: Order API Service
+      definitions:
+        - definition:
+            source:
+              $ref: "#/components/sources/specmaticOrderContracts"
+            specs:
+              - io/specmatic/examples/store/openapi/api_order_v3.yaml
+  runOptions:
+    productSearchGraphQLBffServiceTest:
+      graphqlsdl:
+        type: test
+        host: localhost
+        port: 8080
+    orderApiServiceMock:
+      openapi:
+        type: mock
+        baseUrl: http://localhost:8090
