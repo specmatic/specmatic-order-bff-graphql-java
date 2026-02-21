@@ -1,6 +1,7 @@
 package com.component.orders.contract
 
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.condition.EnabledIf
 import org.springframework.boot.test.context.SpringBootTest
@@ -26,6 +27,10 @@ class ContractTestsUsingTestContainer {
             GenericContainer("specmatic/enterprise")
                 .withImagePullPolicy(alwaysPull())
                 .withCommand("mock")
+                .withCreateContainerCmdModifier { cmd ->
+                    cmd.withStopSignal("SIGINT")
+                    cmd.withStopTimeout(10)
+                }
                 .withFileSystemBind("./src", "/usr/src/app/src", BindMode.READ_ONLY)
                 .withFileSystemBind("./specmatic.yaml", "/usr/src/app/specmatic.yaml", BindMode.READ_ONLY,)
                 .withFileSystemBind("./build/reports/specmatic", "/usr/src/app/build/reports/specmatic", BindMode.READ_WRITE)
@@ -43,12 +48,29 @@ class ContractTestsUsingTestContainer {
                 .withNetworkMode("host")
                 .waitingFor(Wait.forLogMessage(".*Tests run:.*", 1))
                 .withLogConsumer { print(it.utf8String) }
+
+        @AfterAll
+        @JvmStatic
+        fun stopContainers() {
+            if (mockContainer.isRunning) {
+                mockContainer.stop()
+            }
+            if (testContainer.isRunning) {
+                testContainer.stop()
+            }
+        }
     }
 
     @Test
     fun specmaticContractTest() {
         testContainer.start()
-        val hasSucceeded = testContainer.logs.contains("Failures: 0")
-        assertThat(hasSucceeded).isTrue()
+        try {
+            val hasSucceeded = testContainer.logs.contains("Failures: 0")
+            assertThat(hasSucceeded).isTrue()
+        } finally {
+            if (testContainer.isRunning) {
+                testContainer.stop()
+            }
+        }
     }
 }
