@@ -6,9 +6,17 @@ plugins {
     id 'jacoco'
 }
 
+def snapshotRepoUrl = project.findProperty('snapshotRepoUrl')
+
 repositories {
     mavenCentral()
     mavenLocal()
+
+    if(snapshotRepoUrl){
+        maven{
+            url = uri(snapshotRepoUrl)
+        }
+    }
 }
 
 jacocoTestReport {
