@@ -63,21 +63,21 @@ jobs:
             shell: bash
             run: |
               set -euo pipefail
-    
+
               mkdir -p ~/.specmatic
-              
+              url="${ENTERPRISE_ARTIFACT_URL}"
+              output_path="$HOME/.specmatic/specmatic-enterprise.jar"
               echo "Downloading Enterprise artifact from:"
-              echo "${ENTERPRISE_ARTIFACT_URL}"
-              echo "Retry configuration: 3 retries with 15 second delay"
-              
-              curl --http1.1 -L --fail \
-                --retry 5 \
-                --retry-delay 15 \
-                --retry-all-errors \
-                --continue-at - \
-                "${ENTERPRISE_ARTIFACT_URL}" \
-                -o ~/.specmatic/specmatic-enterprise.jar
-    
+              echo "$url"
+
+              initial_sleep=$(( RANDOM % 31 ))
+              echo "Initial jitter: ${initial_sleep}s"
+              sleep "$initial_sleep"
+
+              echo "Download attempt 1/1"
+              curl --http1.1 -L --fail --continue-at - "$url" -o "$output_path"
+              echo "Enterprise artifact downloaded successfully"
+
               mvn install:install-file \
                 -Dfile="$HOME/.specmatic/specmatic-enterprise.jar" \
                 -DgroupId=io.specmatic.enterprise \
@@ -85,7 +85,7 @@ jobs:
                 -Dversion="${ENTERPRISE_VERSION}" \
                 -Dpackaging=jar \
                 -DgeneratePom=true
-    
+
               echo "Installed Enterprise artifact into local Maven"
               
           - name: Docker Login
@@ -105,7 +105,7 @@ jobs:
               name: ctrf-report
               path: ${{ env.CTRF_REPORT_PATH }}
               retention-days: 5
-        
+
           # Display CTRF test results
           - name: Publish Test Results
             uses: ctrf-io/github-test-reporter@v1
@@ -117,8 +117,13 @@ jobs:
             if: ${{ github.ref == 'refs/heads/main' && inputs.orchestrator_run_suffix == '' }}
             run: |
               docker run \
-                -v ${{ github.workspace }}:/workspace \
-                -v ~/.specmatic:/root/.specmatic \
+                --rm \
+                -e GIT_DISCOVERY_ACROSS_FILESYSTEM=1 \
+                -e GIT_CONFIG_COUNT=1 \
+                -e GIT_CONFIG_KEY_0=safe.directory \
+                -e GIT_CONFIG_VALUE_0=/workspace \
+                -v "${HOME}/.specmatic:/root/.specmatic:ro" \
+                -v "${{ github.workspace }}:/workspace" \
                 -w /workspace \
                 specmatic/enterprise \
                 send-report \
