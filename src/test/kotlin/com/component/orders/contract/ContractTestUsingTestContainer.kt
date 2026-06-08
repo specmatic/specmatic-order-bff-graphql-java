@@ -21,9 +21,16 @@ class ContractTestsUsingTestContainer {
         fun isNonCIOrLinux(): Boolean =
             System.getenv("CI") != "true" || System.getProperty("os.name").lowercase().contains("linux")
 
+        private fun enterpriseImage(): String =
+            if(!System.getenv("ENTERPRISE_ARTIFACT_URL").isNullOrEmpty())
+                "specmatic/enterprise-snapshot"
+            else
+                "specmatic/enterprise"
+
+
         @Container
         private val mockContainer: GenericContainer<*> =
-            GenericContainer("specmatic/enterprise")
+            GenericContainer(enterpriseImage())
                 .withImagePullPolicy(alwaysPull())
                 .withCommand("mock")
                 .withFileSystemBind("./src", "/usr/src/app/src", BindMode.READ_ONLY)
@@ -34,7 +41,7 @@ class ContractTestsUsingTestContainer {
                 .withLogConsumer { print(it.utf8String) }
 
         private val testContainer: GenericContainer<*> =
-            GenericContainer("specmatic/enterprise")
+            GenericContainer(enterpriseImage())
                 .withImagePullPolicy(alwaysPull())
                 .withCommand("test")
                 .withFileSystemBind("./src", "/usr/src/app/src", BindMode.READ_ONLY)
