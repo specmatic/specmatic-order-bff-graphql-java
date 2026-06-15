@@ -66,8 +66,8 @@ jobs:
               mkdir -p "$HOME/.gradle/init.d"
               cp ./gradle/specmatic-snapshots.init.gradle "$HOME/.gradle/init.d/specmatic-snapshots.init.gradle"
               
-          - name: Docker Login for orchestrator snapshot image
-            if: ${{ inputs.orchestrator_run_suffix != '' && endsWith(inputs.enterprise_version, '-SNAPSHOT') }}
+          - name: Docker Login
+            if: ${{ inputs.enterprise_artifact_url != '' && github.ref == 'refs/heads/main' }}
             run: echo ${{ secrets.SPECMATIC_DOCKER_HUB_TOKEN }} | docker login -u ${{ vars.SPECMATIC_DOCKER_HUB_USERNAME }} --password-stdin
 
           - name: Prepare snapshot image for orchestrator run
