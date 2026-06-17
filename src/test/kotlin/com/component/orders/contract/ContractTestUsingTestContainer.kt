@@ -21,12 +21,7 @@ class ContractTestsUsingTestContainer {
         fun isNonCIOrLinux(): Boolean =
             System.getenv("CI") != "true" || System.getProperty("os.name").lowercase().contains("linux")
 
-        private fun enterpriseImage(): String =
-            if(!System.getenv("ENTERPRISE_ARTIFACT_URL").isNullOrEmpty())
-                "specmatic/enterprise-snapshot"
-            else
-                "specmatic/enterprise"
-
+        private fun enterpriseImage(): String = "specmatic/enterprise"
 
         @Container
         private val mockContainer: GenericContainer<*> =
