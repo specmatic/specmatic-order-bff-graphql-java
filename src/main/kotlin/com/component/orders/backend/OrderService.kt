@@ -11,6 +11,7 @@ import org.springframework.http.MediaType
 import org.springframework.http.client.SimpleClientHttpRequestFactory
 import org.springframework.stereotype.Service
 import org.springframework.web.client.RestTemplate
+import java.util.UUID
 
 @Service
 class OrderService {
@@ -27,6 +28,7 @@ class OrderService {
     fun createProduct(newProduct: NewProduct): Product? {
         val apiUrl = orderAPIUrl + "/" + API.CREATE_PRODUCTS.url
         val headers = getHeaders()
+        headers.set("Idempotency-Key", UUID.randomUUID().toString())
         val requestEntity = HttpEntity(newProduct, headers)
         val response = RestTemplate().exchange(
             apiUrl,

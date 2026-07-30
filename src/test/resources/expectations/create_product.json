@@ -3,7 +3,8 @@
         "path": "/products",
         "method": "POST",
         "headers": {
-            "Authenticate": "API-TOKEN-SPEC"
+            "Authenticate": "API-TOKEN-SPEC",
+            "Idempotency-Key": "(uuid)"
         },
         "body": {
             "name": "The Almanac",
@@ -12,7 +13,7 @@
         }
     },
     "http-response": {
-        "status": 200,
+        "status": 201,
         "body": {
             "id": 50
         },
