@@ -20,21 +20,19 @@ specmatic:
       schemaResiliencyTests: all
 components:
   sources:
-    bffSchema:
-      filesystem:
-        directory: "."
     specmaticOrderContracts:
       git:
         url: https://github.com/specmatic/specmatic-order-contracts.git
+        branch: apidays/03-shared-contract-baseline
   services:
     productSearchGraphQLBffService:
       description: Product Search GraphQL BFF Service
       definitions:
         - definition:
             source:
-              $ref: "#/components/sources/bffSchema"
+              $ref: "#/components/sources/specmaticOrderContracts"
             specs:
-              - src/main/resources/graphql/products.graphqls
+              - io/specmatic/examples/store/graphql/products_bff.graphqls
     orderApiService:
       description: Order API Service
       definitions:
