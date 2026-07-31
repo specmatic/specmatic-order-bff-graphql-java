@@ -20,6 +20,9 @@ specmatic:
       schemaResiliencyTests: all
 components:
   sources:
+    bffSchema:
+      filesystem:
+        directory: "."
     specmaticOrderContracts:
       git:
         url: https://github.com/specmatic/specmatic-order-contracts.git
@@ -29,9 +32,9 @@ components:
       definitions:
         - definition:
             source:
-              $ref: "#/components/sources/specmaticOrderContracts"
+              $ref: "#/components/sources/bffSchema"
             specs:
-              - io/specmatic/examples/store/graphql/products_bff.graphqls
+              - src/main/resources/graphql/products.graphqls
     orderApiService:
       description: Order API Service
       definitions:
