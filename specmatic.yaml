@@ -23,7 +23,7 @@ components:
     specmaticOrderContracts:
       git:
         url: https://github.com/specmatic/specmatic-order-contracts.git
-        branch: apidays/03-shared-contract-baseline
+        branch: apidays/05-public-breaking-change
   services:
     productSearchGraphQLBffService:
       description: Product Search GraphQL BFF Service
